@@ -1,0 +1,1 @@
+Arquivo placeholder para garantir a existência da pasta /public no build Docker.

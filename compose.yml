@@ -1,0 +1,38 @@
+services:
+  projeto-futuro:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+    image: projeto-futuro:latest
+    container_name: projeto-futuro
+    restart: unless-stopped
+    networks: [coolify]
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - NEXT_TELEMETRY_DISABLED=1
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=coolify
+      - "traefik.http.routers.http-futuro.rule=Host(`projetofuturo.lucianopazinato.com.br`)"
+      - traefik.http.routers.http-futuro.entrypoints=http
+      - traefik.http.routers.http-futuro.middlewares=futuro-redir
+      - traefik.http.middlewares.futuro-redir.redirectscheme.scheme=https
+      - "traefik.http.routers.https-futuro.rule=Host(`projetofuturo.lucianopazinato.com.br`)"
+      - traefik.http.routers.https-futuro.entrypoints=https
+      - traefik.http.routers.https-futuro.tls=true
+      - traefik.http.routers.https-futuro.tls.certresolver=letsencrypt
+      - traefik.http.routers.https-futuro.service=futuro-svc
+      - traefik.http.services.futuro-svc.loadbalancer.server.port=3000
+
+networks:
+  coolify:
+    external: true
