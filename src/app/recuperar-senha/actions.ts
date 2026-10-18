@@ -21,7 +21,7 @@ export async function enviarRecuperacao(formData: FormData) {
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${siteUrl}/redefinir-senha`,
+    redirectTo: `${siteUrl}/auth/callback?next=/redefinir-senha`,
   });
 
   // Por seguranca, nao revelamos se o e-mail existe ou nao.
